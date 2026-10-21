@@ -21,10 +21,10 @@ jobs:
         id: get-folders
         run: |
           folders_modules=$(find modules/ -mindepth 1 -maxdepth 1 \
-            -type d -printf '%f\n' | sort)
+            -type d -printf '%f\n' | sort | sed '/^$/d')
 
           folders_apps=$(find apps/ -mindepth 1 -maxdepth 1 \
-            -type d -printf '%f\n' | sort)
+            -type d -printf '%f\n' | sort | sed '/^$/d')
 
           json=$(printf '%s\n' "$folders_modules" "$folders_apps" | jq -R . | jq -s -c .)
           echo "folders=$json" >> "$GITHUB_OUTPUT"
