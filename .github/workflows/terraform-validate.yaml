@@ -81,3 +81,25 @@ jobs:
         with:
             working_directory: apps/${{ matrix.apps }}
             terraform_version: "1.14.6"
+
+  validation-status:
+    name: Terraform Validation Status
+    if: always()
+    needs: [folders, terraform-validate-modules, terraform-validate-apps]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check module and app validation results
+        env:
+          FOLDERS_RESULT: ${{ needs.folders.result }}
+          MODULES_RESULT: ${{ needs.terraform-validate-modules.result }}
+          APPS_RESULT: ${{ needs.terraform-validate-apps.result }}
+        run: |
+          if [[ "$FOLDERS_RESULT" != "success" || \
+                ( "$MODULES_RESULT" != "success" && "$MODULES_RESULT" != "skipped" ) || \
+                ( "$APPS_RESULT" != "success" && "$APPS_RESULT" != "skipped" ) ]]; then
+            echo "Terraform validation failed: folders=$FOLDERS_RESULT, modules=$MODULES_RESULT, apps=$APPS_RESULT"
+            exit 1
+          fi
+          echo "All Terraform modules and apps validated successfully."
+
+  
