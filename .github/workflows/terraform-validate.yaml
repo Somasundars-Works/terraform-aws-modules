@@ -21,13 +21,21 @@ jobs:
         id: get-folders
         run: |
           folders_modules=$(find modules/ -mindepth 1 -maxdepth 1 \
-            -type d -printf '%f\n' | sort | sed '/^$/d')
+            -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
           folders_apps=$(find apps/ -mindepth 1 -maxdepth 1 \
-            -type d -printf '%f\n' | sort | sed '/^$/d')
+            -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
-          json=$(printf '%s\n' "$folders_modules" "$folders_apps" | jq -R . | jq -s -c .)
+          json=$(jq -cn \
+            --argjson modules "$folders_modules" \
+            --argjson apps "$folders_apps" \
+            '$modules + $apps')
+
           echo "folders=$json" >> "$GITHUB_OUTPUT"
+
+      - name: Output Folders
+        run: |
+            echo "Discovered folders: ${{ needs.folders.outputs.folders }}"
 
   terraform-validate:
     if: ${{ needs.folders.outputs.folders != '' }}
