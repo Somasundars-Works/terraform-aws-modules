@@ -45,8 +45,8 @@ jobs:
     needs: folders
     strategy:
       matrix:
-        folder: ${{ fromJSON(needs.folders.outputs.output_modules) }}
-    name: Module - ${{ matrix.folder }}
+        modules: ${{ fromJSON(needs.folders.outputs.output_modules) }}
+    name: Module - ${{ matrix.modules }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
       - name: Terraform Init and Validate
         uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
         with:
-            working_directory: ${{ matrix.folder }}
+            working_directory: ${{ matrix.modules }}
             terraform_version: "1.14.6"
 
   terraform-validate-apps:
@@ -63,8 +63,8 @@ jobs:
     needs: folders
     strategy:
       matrix:
-        folder: ${{ fromJSON(needs.folders.outputs.output_apps) }}
-    name: App - ${{ matrix.folder }}
+        apps: ${{ fromJSON(needs.folders.outputs.output_apps) }}
+    name: App - ${{ matrix.apps }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -73,5 +73,5 @@ jobs:
       - name: Terraform Init and Validate
         uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
         with:
-            working_directory: ${{ matrix.folder }}
+            working_directory: ${{ matrix.apps }}
             terraform_version: "1.14.6"
