@@ -61,7 +61,7 @@ jobs:
       - name: Terraform Init and Validate
         uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
         with:
-            working_directory: ${{ matrix.modules }}
+            working_directory: modules/${{ matrix.modules }}
             terraform_version: "1.14.6"
 
   terraform-validate-apps:
@@ -79,5 +79,5 @@ jobs:
       - name: Terraform Init and Validate
         uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
         with:
-            working_directory: ${{ matrix.apps }}
+            working_directory: apps/${{ matrix.apps }}
             terraform_version: "1.14.6"
