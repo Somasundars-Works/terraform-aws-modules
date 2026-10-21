@@ -24,6 +24,7 @@ jobs:
           echo "folders=$folders" >> $GITHUB_OUTPUT
 
   terraform-validate:
+    if: ${{ needs.folders.outputs.folders != '' }}
     needs: folders
     strategy:
       matrix:
