@@ -47,7 +47,7 @@ jobs:
 
 
   terraform-validate-modules:
-    if: ${{ needs.folders.outputs.output_modules != '' }}
+    if: ${{ needs.folders.outputs.output_modules != '' && needs.folders.outputs.output_modules != '[]' }}
     needs: folders
     strategy:
       matrix:
@@ -65,7 +65,7 @@ jobs:
             terraform_version: "1.14.6"
 
   terraform-validate-apps:
-    if: ${{ needs.folders.outputs.output_apps != '' }}
+    if: ${{ needs.folders.outputs.output_apps != '' && needs.folders.outputs.output_apps != '[]' }}
     needs: folders
     strategy:
       matrix:
