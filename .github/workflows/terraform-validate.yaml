@@ -39,6 +39,12 @@ jobs:
 
           echo "output_apps=$json_apps" >> "$GITHUB_OUTPUT"
 
+          echo "Modules found: $folders_modules"
+          echo "Apps found: $folders_apps"
+          echo "output_modules=$json_modules"
+          echo "output_apps=$json_apps"
+          echo "Folders discovery completed."
+
 
   terraform-validate-modules:
     if: ${{ needs.folders.outputs.output_modules != '' }}
