@@ -12,8 +12,8 @@ jobs:
     name: Discover Terraform Modules & Apps
     runs-on: ubuntu-latest
     outputs:
-      modules: ${{ steps.get-folders.outputs.folders }}
-      apps: ${{ steps.get-folders.outputs.folders }}
+      output_modules: ${{ steps.get-folders.outputs.folders }}
+      output_apps: ${{ steps.get-folders.outputs.folders }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -24,18 +24,28 @@ jobs:
           folders_modules=$(find modules/ -mindepth 1 -maxdepth 1 \
             -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
+          json_modules=$(jq -cn \
+            --argjson modules "$folders_modules" \
+            '$modules')
+
+          echo "output_modules=$json_modules" >> "$GITHUB_OUTPUT"
+
           folders_apps=$(find apps/ -mindepth 1 -maxdepth 1 \
             -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
-          echo "modules=$folders_modules" >> "$GITHUB_OUTPUT"
-          echo "apps=$folders_apps" >> "$GITHUB_OUTPUT"
+          json_apps=$(jq -cn \
+            --argjson apps "$folders_apps" \
+            '$apps')
+
+          echo "output_apps=$json_apps" >> "$GITHUB_OUTPUT"
+
 
   terraform-validate-modules:
-    if: ${{ needs.folders.outputs.modules != '' }}
+    if: ${{ needs.folders.outputs.output_modules != '' }}
     needs: folders
     strategy:
       matrix:
-        folder: ${{ fromJSON(needs.folders.outputs.modules) }}
+        folder: ${{ fromJSON(needs.folders.outputs.output_modules) }}
     name: Module - ${{ matrix.folder }}
     runs-on: ubuntu-latest
     steps:
@@ -49,11 +59,11 @@ jobs:
             terraform_version: "1.14.6"
 
   terraform-validate-apps:
-    if: ${{ needs.folders.outputs.apps != '' }}
+    if: ${{ needs.folders.outputs.output_apps != '' }}
     needs: folders
     strategy:
       matrix:
-        folder: ${{ fromJSON(needs.folders.outputs.apps) }}
+        folder: ${{ fromJSON(needs.folders.outputs.output_apps) }}
     name: App - ${{ matrix.folder }}
     runs-on: ubuntu-latest
     steps:
