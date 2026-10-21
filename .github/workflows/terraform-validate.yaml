@@ -12,8 +12,8 @@ jobs:
     name: Discover Terraform Modules & Apps
     runs-on: ubuntu-latest
     outputs:
-      output_modules: ${{ steps.get-folders.outputs.folders }}
-      output_apps: ${{ steps.get-folders.outputs.folders }}
+      output_modules: ${{ steps.get-folders.outputs.output_modules }}
+      output_apps: ${{ steps.get-folders.outputs.output_apps }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
