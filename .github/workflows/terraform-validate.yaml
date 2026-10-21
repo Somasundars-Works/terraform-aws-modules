@@ -12,7 +12,8 @@ jobs:
     name: Discover Terraform Modules & Apps
     runs-on: ubuntu-latest
     outputs:
-      folders: ${{ steps.get-folders.outputs.folders }}
+      modules: ${{ steps.get-folders.outputs.folders }}
+      apps: ${{ steps.get-folders.outputs.folders }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -26,24 +27,39 @@ jobs:
           folders_apps=$(find apps/ -mindepth 1 -maxdepth 1 \
             -type d -printf '%f\n' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
-          json=$(jq -cn \
-            --argjson modules "$folders_modules" \
-            --argjson apps "$folders_apps" \
-            '$modules + $apps')
+          echo "modules=$folders_modules" >> "$GITHUB_OUTPUT"
+          echo "apps=$folders_apps" >> "$GITHUB_OUTPUT"
 
-          echo "folders=$json" >> "$GITHUB_OUTPUT"
-
-      - name: Output Folders
-        run: |
-            echo "Discovered folders: ${{ needs.folders.outputs.folders }}"
-
-  terraform-validate:
-    if: ${{ needs.folders.outputs.folders != '' }}
+  terraform-validate-modules:
+    if: ${{ needs.folders.outputs.modules != '' }}
     needs: folders
     strategy:
       matrix:
-        folder: ${{ fromJSON(needs.folders.outputs.folders) }}
-    name: Terraform Validate - ${{ matrix.folder }}
+        folder: ${{ fromJSON(needs.folders.outputs.modules) }}
+    name: Module - ${{ matrix.folder }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+  terraform-validate-apps:
+    if: ${{ needs.folders.outputs.apps != '' }}
+    needs: folders
+    strategy:
+      matrix:
+        folder: ${{ fromJSON(needs.folders.outputs.apps) }}
+    name: App - ${{ matrix.folder }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
