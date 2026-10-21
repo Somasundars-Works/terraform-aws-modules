@@ -42,16 +42,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v4
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Format Check
-        run: terraform fmt -check
+      - name: Terraform Init and Validate
+        uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
+        with:
+            working_directory: ${{ matrix.folder }}
+            terraform_version: "1.14.6"
 
   terraform-validate-apps:
     if: ${{ needs.folders.outputs.apps != '' }}
@@ -65,13 +60,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v4
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Format Check
-        run: terraform fmt -check
+      - name: Terraform Init and Validate
+        uses: Somasundars-Works/devops-toolkit/actions/terraform-validate@v1.0.0
+        with:
+            working_directory: ${{ matrix.folder }}
+            terraform_version: "1.14.6"
