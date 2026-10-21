@@ -9,7 +9,7 @@ on:
 
 jobs:
   folders:
-    name: Get Folders of Terraform Modules & Apps
+    name: Discover Terraform Modules & Apps
     runs-on: ubuntu-latest
     outputs:
       folders: ${{ steps.get-folders.outputs.folders }}
@@ -20,8 +20,14 @@ jobs:
       - name: Get Folders
         id: get-folders
         run: |
-          folders=$(find . -type f -name "*.tf" -exec dirname {} \; | sort -u)
-          echo "folders=$folders" >> $GITHUB_OUTPUT
+          folders_modules=$(find modules/ -mindepth 1 -maxdepth 1 \
+            -type d -printf '%f\n' | sort)
+
+          folders_apps=$(find apps/ -mindepth 1 -maxdepth 1 \
+            -type d -printf '%f\n' | sort)
+
+          json=$(printf '%s\n' "$folders_modules" "$folders_apps" | jq -R . | jq -s -c .)
+          echo "folders=$json" >> "$GITHUB_OUTPUT"
 
   terraform-validate:
     if: ${{ needs.folders.outputs.folders != '' }}
