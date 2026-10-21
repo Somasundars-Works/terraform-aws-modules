@@ -1,0 +1,46 @@
+name: Validate Terraform Modules & Apps
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  folders:
+    name: Get Folders of Terraform Modules & Apps
+    runs-on: ubuntu-latest
+    outputs:
+      folders: ${{ steps.get-folders.outputs.folders }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+    
+      - name: Get Folders
+        id: get-folders
+        run: |
+          folders=$(find . -type f -name "*.tf" -exec dirname {} \; | sort -u)
+          echo "folders=$folders" >> $GITHUB_OUTPUT
+
+  terraform-validate:
+    needs: folders
+    strategy:
+      matrix:
+        folder: ${{ fromJSON(needs.folders.outputs.folders) }}
+    name: Terraform Validate - ${{ matrix.folder }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
