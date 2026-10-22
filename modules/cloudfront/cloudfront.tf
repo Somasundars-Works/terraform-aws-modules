@@ -4,7 +4,6 @@ resource "aws_cloudfront_origin_access_identity" "cloudfront_oai" {
 
 resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   depends_on = [
-    data.aws_route53_zone.domain_zone,
     data.aws_s3_bucket.website_bucket,
     aws_cloudfront_origin_access_identity.cloudfront_oai
   ]

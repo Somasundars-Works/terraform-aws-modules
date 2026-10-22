@@ -28,3 +28,12 @@ module "cloudfront" {
   bucket_name         = module.bucket.website_bucket
   acm_certificate_arn = module.certificate.certificate_arn
 }
+
+module "cloudfront_domain" {
+  source = "../../modules/cloudfront-domain"
+
+  domain_name               = var.domain_name
+  route53_zone_name         = var.route53_zone_name != null ? var.route53_zone_name : var.domain_name
+  cloudfront_domain_name    = module.cloudfront.distribution_domain_name
+  cloudfront_hosted_zone_id = module.cloudfront.distribution_hosted_zone_id
+}
