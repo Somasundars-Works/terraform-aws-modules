@@ -1,10 +1,10 @@
 output "identity_user_pool_id" {
-  description = "Cognito user pool ID for the website identity service."
+  description = "Cognito user pool ID."
   value       = module.identity.user_pool_id
 }
 
 output "identity_ui_client_id" {
-  description = "Cognito UI app client ID for the website."
+  description = "Cognito UI app client ID."
   value       = module.identity.ui_client_id
   sensitive   = true
 }
