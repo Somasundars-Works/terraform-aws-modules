@@ -1,5 +1,5 @@
 module "certificate" {
-  source = "../../modules/certificate"
+  source = "../../modules/acm"
 
   region      = var.region
   domain_name = var.domain_name
@@ -10,7 +10,7 @@ module "certificate" {
 }
 
 module "bucket" {
-  source = "../../modules/s3"
+  source = "../../modules/S3"
 
   project_name = var.project_name
   environment  = var.environment
