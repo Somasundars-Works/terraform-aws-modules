@@ -1,7 +1,7 @@
 name: Validate Terraform Modules & Apps
 on:
   push:
-    branches:
+    branches-ignore:
       - main
   pull_request:
     branches:
