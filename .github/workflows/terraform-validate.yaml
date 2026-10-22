@@ -1,8 +1,6 @@
 name: Validate Terraform Modules & Apps
 on:
-  push:
-    branches-ignore:
-      - main
+  workflow_dispatch:
   pull_request:
     branches:
       - main
