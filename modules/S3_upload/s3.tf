@@ -1,4 +1,4 @@
-resource "aws_s3_bucket_object" "object" {
+resource "aws_s3_object" "object" {
   key                    = var.key
   bucket                 = data.aws_s3_bucket.website_bucket.id
   source                 = var.source_path
