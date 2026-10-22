@@ -4,8 +4,26 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 jobs:
+  terraform-format:
+    name: Terraform Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.6"
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check -recursive
+
   folders:
     name: Discover Terraform Modules & Apps
     runs-on: ubuntu-latest
@@ -83,21 +101,23 @@ jobs:
   validation-status:
     name: Terraform Validation Status
     if: always()
-    needs: [folders, terraform-validate-modules, terraform-validate-apps]
+    needs: [terraform-format, folders, terraform-validate-modules, terraform-validate-apps]
     runs-on: ubuntu-latest
     steps:
-      - name: Check module and app validation results
+      - name: Check formatting, module, and app validation results
         env:
+          FORMAT_RESULT: ${{ needs.terraform-format.result }}
           FOLDERS_RESULT: ${{ needs.folders.result }}
           MODULES_RESULT: ${{ needs.terraform-validate-modules.result }}
           APPS_RESULT: ${{ needs.terraform-validate-apps.result }}
         run: |
-          if [[ "$FOLDERS_RESULT" != "success" || \
+          if [[ "$FORMAT_RESULT" != "success" || \
+                "$FOLDERS_RESULT" != "success" || \
                 ( "$MODULES_RESULT" != "success" && "$MODULES_RESULT" != "skipped" ) || \
                 ( "$APPS_RESULT" != "success" && "$APPS_RESULT" != "skipped" ) ]]; then
-            echo "Terraform validation failed: folders=$FOLDERS_RESULT, modules=$MODULES_RESULT, apps=$APPS_RESULT"
+            echo "Terraform checks failed: format=$FORMAT_RESULT, folders=$FOLDERS_RESULT, modules=$MODULES_RESULT, apps=$APPS_RESULT"
             exit 1
           fi
-          echo "All Terraform modules and apps validated successfully."
+          echo "Terraform formatting and all module/app validations passed."
 
   
