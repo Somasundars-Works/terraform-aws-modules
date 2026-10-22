@@ -13,3 +13,10 @@ variable "region" {
 variable "domain_name" {
   type = string
 }
+
+variable "route53_zone_name" {
+  description = "Optional Route 53 hosted zone name; defaults to domain_name."
+  type        = string
+  default     = null
+  nullable    = true
+}
