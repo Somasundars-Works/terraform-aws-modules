@@ -2,7 +2,16 @@ name: Validate Terraform Modules & Apps
 on:
   push:
     branches:
-      - main
+      - feature-*
+      - feature/*
+      - bugfix-*
+      - bugfix/*
+      - fix-*
+      - fix/*
+      - hotfix-*
+      - hotfix/*
+      - release-*
+      - release/*
   pull_request:
     branches:
       - main
