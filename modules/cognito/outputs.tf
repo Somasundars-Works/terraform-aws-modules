@@ -4,6 +4,11 @@ output "ui_client_id" {
   value       = aws_cognito_user_pool_client.ui.id
 }
 
+output "user_pool_id" {
+  description = "Cognito user pool ID."
+  value       = aws_cognito_user_pool.this.id
+}
+
 output "machine_client_ids" {
   description = "App client IDs for backend services."
   sensitive   = true

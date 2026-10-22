@@ -61,7 +61,7 @@ resource "aws_cognito_user_pool_client" "ui" {
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
 
-  allowed_oauth_scopes = merge([
+  allowed_oauth_scopes = concat([
     "openid",
     "email",
     "profile"
@@ -109,9 +109,4 @@ resource "aws_cognito_user_pool_client" "machine" {
   depends_on = [
     aws_cognito_resource_server.api
   ]
-}
-resource "aws_cognito_user_pool_domain" "this" {
-  domain          = var.custom_domain
-  user_pool_id    = aws_cognito_user_pool.this.id
-  certificate_arn = aws_acm_certificate_validation.cognito.certificate_arn
 }

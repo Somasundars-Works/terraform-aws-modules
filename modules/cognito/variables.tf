@@ -3,11 +3,6 @@ variable "name" {
   type        = string
 }
 
-variable "domain_prefix" {
-  description = "Globally unique Cognito hosted-domain prefix."
-  type        = string
-}
-
 variable "callback_urls" {
   description = "Allowed UI login callback URLs."
   type        = list(string)
@@ -50,16 +45,6 @@ variable "machine_clients" {
   }))
 
   default = {}
-}
-
-variable "custom_domain" {
-  description = "Custom Cognito domain, e.g. auth.example.com"
-  type        = string
-}
-
-variable "route53_zone_name" {
-  description = "Parent Route 53 hosted zone name"
-  type        = string
 }
 
 variable "custom_ui_scopes" {

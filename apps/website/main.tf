@@ -1,8 +1,9 @@
 module "certificate" {
   source = "../../modules/acm"
 
-  region      = var.region
-  domain_name = var.domain_name
+  region            = var.region
+  domain_name       = var.domain_name
+  route53_zone_name = var.route53_zone_name
 
   providers = {
     aws = aws.us_east_1
